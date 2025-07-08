@@ -1,0 +1,47 @@
+connectorType: source
+definitionId: cbff570a-7049-4922-aa5e-c6cdf0288c05
+name: Test
+dockerRepository: airbyte/source-test
+dockerImageTag: 0.1.0
+metadataSpecVersion: "1.0"
+connectorSubtype: api
+documentationUrl: https://docs.airbyte.com/integrations/sources/test
+supportLevel: community
+license: MIT
+tags:
+  - language:python
+  - keyword:api
+  - keyword:users
+  - keyword:jsonplaceholder
+releases:
+  breakingChanges:
+    1.0.0:
+      message: Initial release of the Test source connector for JSONPlaceholder users API
+      upgradeDeadline: "2024-12-31"
+registries:
+  cloud:
+    enabled: false
+  oss:
+    enabled: true
+connectorTestSuitesOptions:
+  - suite: unitTests
+    testSecrets:
+      - name: config.json
+        fileName: config.json
+        secretStore:
+          type: GSM
+          alias: airbyte-connector-testing-secret-store
+  - suite: integrationTests
+    testSecrets:
+      - name: config.json
+        fileName: config.json
+        secretStore:
+          type: GSM
+          alias: airbyte-connector-testing-secret-store
+  - suite: acceptanceTests
+    testSecrets:
+      - name: config.json
+        fileName: config.json
+        secretStore:
+          type: GSM
+          alias: airbyte-connector-testing-secret-store

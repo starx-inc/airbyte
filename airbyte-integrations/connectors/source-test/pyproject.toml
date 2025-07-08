@@ -1,0 +1,27 @@
+[tool.poetry]
+name = "source-test"
+version = "0.1.0"
+description = "Source implementation for Test."
+authors = ["Airbyte <contact@airbyte.io>"]
+readme = "README.md"
+license = "MIT"
+documentation = "https://docs.airbyte.com/integrations/sources/test"
+homepage = "https://airbyte.com"
+repository = "https://github.com/airbytehq/airbyte"
+packages = [ {include = "source_test"}, {include = "main.py"} ]
+
+[tool.poetry.dependencies]
+python = "^3.10,<3.13"
+airbyte-cdk = "^6.58.0"
+
+[tool.poetry.scripts]
+source-test = "source_test.run:run"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.0.0"
+pytest-mock = "^3.6.1"
+requests-mock = "^1.9.3"
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
