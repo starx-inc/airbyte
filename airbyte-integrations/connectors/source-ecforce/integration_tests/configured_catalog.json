@@ -1,0 +1,63 @@
+{
+  "streams": [
+    {
+      "stream": {
+        "name": "customers",
+        "json_schema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "id": {"type": ["string", "null"]},
+            "type": {"type": ["string", "null"]},
+            "name": {"type": ["string", "null"]},
+            "name_kana": {"type": ["string", "null"]},
+            "email": {"type": ["string", "null"]},
+            "tel": {"type": ["string", "null"]},
+            "mobile": {"type": ["string", "null"]},
+            "birthday": {"type": ["string", "null"]},
+            "sex": {"type": ["integer", "null"]},
+            "postal_code": {"type": ["string", "null"]},
+            "prefecture": {"type": ["string", "null"]},
+            "city": {"type": ["string", "null"]},
+            "street": {"type": ["string", "null"]},
+            "building": {"type": ["string", "null"]},
+            "company_name": {"type": ["string", "null"]},
+            "department": {"type": ["string", "null"]},
+            "accepts_marketing": {"type": ["boolean", "null"]},
+            "accepts_marketing_updated_at": {"type": ["string", "null"]},
+            "customer_code": {"type": ["string", "null"]},
+            "customer_status": {"type": ["integer", "null"]},
+            "created_at": {"type": ["string", "null"]},
+            "updated_at": {"type": ["string", "null"]},
+            "deleted_at": {"type": ["string", "null"]}
+          }
+        },
+        "supported_sync_modes": ["full_refresh"],
+        "source_defined_primary_key": [["id"]]
+      },
+      "sync_mode": "full_refresh",
+      "destination_sync_mode": "overwrite"
+    },
+    {
+      "stream": {
+        "name": "customer_notes",
+        "json_schema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "id": {"type": ["string", "null"]},
+            "customer_id": {"type": ["string", "null"]},
+            "content": {"type": ["string", "null"]},
+            "operated_at": {"type": ["string", "null"]},
+            "created_at": {"type": ["string", "null"]},
+            "updated_at": {"type": ["string", "null"]}
+          }
+        },
+        "supported_sync_modes": ["full_refresh"],
+        "source_defined_primary_key": [["id"]]
+      },
+      "sync_mode": "full_refresh",
+      "destination_sync_mode": "overwrite"
+    }
+  ]
+}
