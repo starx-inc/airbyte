@@ -33,6 +33,28 @@ def convert_ecforce_datetime(date_str: Optional[str]) -> Optional[str]:
         return date_str
 
 
+def convert_ecforce_date(date_str: Optional[str]) -> Optional[str]:
+    """Convert ecforce date format to ISO 8601 date format
+    
+    Args:
+        date_str: Date string in format "YYYY/MM/DD"
+        
+    Returns:
+        ISO 8601 date formatted string or None if input is None/empty
+    """
+    if not date_str:
+        return None
+    
+    try:
+        # Parse ecforce format: "1994/01/01"
+        dt = datetime.strptime(date_str, "%Y/%m/%d")
+        # Return ISO 8601 date format: "1994-01-01"
+        return dt.strftime("%Y-%m-%d")
+    except ValueError:
+        # Return original if parse fails
+        return date_str
+
+
 class EcforceStream(HttpStream):
     """Base stream class for ecforce API"""
     
@@ -165,12 +187,62 @@ class CustomersStream(CustomersWithNotesStream):
                 attributes["updated_at"] = convert_ecforce_datetime(attributes["updated_at"])
             if "deleted_at" in attributes:
                 attributes["deleted_at"] = convert_ecforce_datetime(attributes["deleted_at"])
+            if "first_order_completed_at" in attributes:
+                attributes["first_order_completed_at"] = convert_ecforce_datetime(attributes["first_order_completed_at"])
+            if "last_order_completed_at" in attributes:
+                attributes["last_order_completed_at"] = convert_ecforce_datetime(attributes["last_order_completed_at"])
+            if "point_expired_at" in attributes:
+                attributes["point_expired_at"] = convert_ecforce_datetime(attributes["point_expired_at"])
+            
+            # Convert date fields to ISO 8601 date format
+            if "birth" in attributes:
+                attributes["birth"] = convert_ecforce_date(attributes["birth"])
+            
+            # Remove fields not in the target schema
+            if "type" in attributes:
+                del attributes["type"]
             if "accepts_marketing_updated_at" in attributes:
-                attributes["accepts_marketing_updated_at"] = convert_ecforce_datetime(attributes["accepts_marketing_updated_at"])
+                del attributes["accepts_marketing_updated_at"]
+            if "is_auto_generated_email" in attributes:
+                del attributes["is_auto_generated_email"]
+            
+            # Map some field names if needed
+            if "email" in attributes:
+                # email field is already named correctly
+                pass
+            if "name" in attributes:
+                del attributes["name"]
+            if "name_kana" in attributes:
+                del attributes["name_kana"]
+            if "tel" in attributes:
+                del attributes["tel"]
+            if "mobile" in attributes:
+                del attributes["mobile"]
+            if "mobile_email" in attributes:
+                del attributes["mobile_email"]
+            if "birthday" in attributes:
+                del attributes["birthday"]
+            if "postal_code" in attributes:
+                del attributes["postal_code"]
+            if "prefecture" in attributes:
+                del attributes["prefecture"]
+            if "city" in attributes:
+                del attributes["city"]
+            if "street" in attributes:
+                del attributes["street"]
+            if "building" in attributes:
+                del attributes["building"]
+            if "company_name" in attributes:
+                del attributes["company_name"]
+            if "department" in attributes:
+                del attributes["department"]
+            if "customer_code" in attributes:
+                del attributes["customer_code"]
+            if "customer_status" in attributes:
+                del attributes["customer_status"]
             
             customer_data = {
-                "id": record.get("id"),
-                "type": record.get("type"),
+                "id": int(record.get("id")),
                 **attributes
             }
             yield customer_data
@@ -180,30 +252,135 @@ class CustomersStream(CustomersWithNotesStream):
         return {
             "$schema": "http://json-schema.org/draft-07/schema#",
             "type": "object",
+            "required": ["id"],
             "properties": {
-                "id": {"type": ["string", "null"]},
-                "type": {"type": ["string", "null"]},
-                "name": {"type": ["string", "null"]},
-                "name_kana": {"type": ["string", "null"]},
-                "email": {"type": ["string", "null"]},
-                "tel": {"type": ["string", "null"]},
-                "mobile": {"type": ["string", "null"]},
-                "birthday": {"type": ["string", "null"], "format": "date"},
-                "sex": {"type": ["integer", "null"]},
-                "postal_code": {"type": ["string", "null"]},
-                "prefecture": {"type": ["string", "null"]},
-                "city": {"type": ["string", "null"]},
-                "street": {"type": ["string", "null"]},
-                "building": {"type": ["string", "null"]},
-                "company_name": {"type": ["string", "null"]},
-                "department": {"type": ["string", "null"]},
-                "accepts_marketing": {"type": ["boolean", "null"]},
-                "accepts_marketing_updated_at": {"type": ["string", "null"], "format": "date-time"},
-                "customer_code": {"type": ["string", "null"]},
-                "customer_status": {"type": ["integer", "null"]},
-                "created_at": {"type": ["string", "null"], "format": "date-time"},
-                "updated_at": {"type": ["string", "null"], "format": "date-time"},
-                "deleted_at": {"type": ["string", "null"], "format": "date-time"},
+                "id": {
+                    "type": "integer",
+                    "description": "顧客ID"
+                },
+                "authentication_token": {
+                    "type": ["string", "null"],
+                    "description": "認証トークン"
+                },
+                "number": {
+                    "type": ["string", "null"],
+                    "description": "顧客番号"
+                },
+                "state": {
+                    "type": ["string", "null"],
+                    "description": "会員ステータス"
+                },
+                "human_state_name": {
+                    "type": ["string", "null"],
+                    "description": "会員ステータス（日本語）"
+                },
+                "customer_rank_name": {
+                    "type": ["string", "null"],
+                    "description": "会員ランク名"
+                },
+                "sex_id": {
+                    "type": ["integer", "null"],
+                    "description": "性別ID"
+                },
+                "sex": {
+                    "type": ["string", "null"],
+                    "description": "性別"
+                },
+                "job": {
+                    "type": ["string", "null"],
+                    "description": "職業"
+                },
+                "birth": {
+                    "type": ["string", "null"],
+                    "format": "date",
+                    "description": "生年月日"
+                },
+                "buy_times": {
+                    "type": ["integer", "null"],
+                    "description": "顧客購入回数"
+                },
+                "buy_total": {
+                    "type": ["integer", "null"],
+                    "description": "購入総額"
+                },
+                "first_order_completed_at": {
+                    "type": ["string", "null"],
+                    "format": "date-time",
+                    "description": "初回受注日時"
+                },
+                "last_order_completed_at": {
+                    "type": ["string", "null"],
+                    "format": "date-time",
+                    "description": "最終受注日時"
+                },
+                "point": {
+                    "type": ["integer", "null"],
+                    "description": "合計ポイント"
+                },
+                "point_expired_at": {
+                    "type": ["string", "null"],
+                    "format": "date-time",
+                    "description": "ポイント有効期限"
+                },
+                "customer_type_name": {
+                    "type": ["string", "null"],
+                    "description": "顧客タイプ名"
+                },
+                "optin": {
+                    "type": ["boolean", "null"],
+                    "description": "メールマガジン受け取り"
+                },
+                "line_id": {
+                    "type": ["string", "null"],
+                    "description": "LINE ID"
+                },
+                "tenant_id": {
+                    "type": ["integer", "null"],
+                    "description": "テナント ID"
+                },
+                "mail_delivery_stop": {
+                    "type": ["boolean", "null"],
+                    "description": "メール送信しない"
+                },
+                "np_royal_customer": {
+                    "type": ["boolean", "null"],
+                    "description": "NP後払いリアルタイムロイヤルカスタマー"
+                },
+                "blacklist": {
+                    "type": ["boolean", "null"],
+                    "description": "ブラックリスト"
+                },
+                "blacklist_reasons": {
+                    "type": ["string", "null"],
+                    "description": "ブラックリスト理由"
+                },
+                "labels": {
+                    "type": ["string", "null"],
+                    "description": "顧客ラベル"
+                },
+                "coupon_codes": {
+                    "type": ["string", "null"],
+                    "description": "クーポンコード"
+                },
+                "link_number": {
+                    "type": ["string", "null"],
+                    "description": "連携用顧客番号"
+                },
+                "created_at": {
+                    "type": ["string", "null"],
+                    "format": "date-time",
+                    "description": "入会日"
+                },
+                "updated_at": {
+                    "type": ["string", "null"],
+                    "format": "date-time",
+                    "description": "更新日"
+                },
+                "deleted_at": {
+                    "type": ["string", "null"],
+                    "format": "date-time",
+                    "description": "退会日"
+                }
             }
         }
 
@@ -245,8 +422,8 @@ class CustomerNotesStream(CustomersWithNotesStream):
                         note_attributes["operated_at"] = convert_ecforce_datetime(note_attributes["operated_at"])
                     
                     yield {
-                        "id": note["id"],
-                        "customer_id": customer_id,
+                        "id": int(note["id"]),
+                        "customer_id": int(customer_id),
                         **note_attributes
                     }
     
@@ -255,13 +432,35 @@ class CustomerNotesStream(CustomersWithNotesStream):
         return {
             "$schema": "http://json-schema.org/draft-07/schema#",
             "type": "object",
+            "required": ["id"],
             "properties": {
-                "id": {"type": ["string", "null"]},
-                "customer_id": {"type": ["string", "null"]},
-                "content": {"type": ["string", "null"]},
-                "operated_at": {"type": ["string", "null"], "format": "date-time"},
-                "created_at": {"type": ["string", "null"], "format": "date-time"},
-                "updated_at": {"type": ["string", "null"], "format": "date-time"},
+                "id": {
+                    "type": "integer",
+                    "description": "メモID"
+                },
+                "customer_id": {
+                    "type": ["integer", "null"],
+                    "description": "顧客ID"
+                },
+                "content": {
+                    "type": ["string", "null"],
+                    "description": "メモ"
+                },
+                "operated_at": {
+                    "type": ["string", "null"],
+                    "format": "date-time",
+                    "description": "受付日"
+                },
+                "created_at": {
+                    "type": ["string", "null"],
+                    "format": "date-time",
+                    "description": "作成日"
+                },
+                "updated_at": {
+                    "type": ["string", "null"],
+                    "format": "date-time",
+                    "description": "更新日"
+                },
             }
         }
 
