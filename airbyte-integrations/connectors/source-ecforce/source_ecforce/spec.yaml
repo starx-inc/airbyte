@@ -1,0 +1,43 @@
+documentationUrl: https://docs.airbyte.com/integrations/sources/ecforce
+connectionSpecification:
+  $schema: http://json-schema.org/draft-07/schema#
+  title: ecforce Spec
+  type: object
+  required:
+    - domain
+    - api_token
+    - start_date
+  additionalProperties: false
+  properties:
+    domain:
+      type: string
+      title: Domain
+      description: Your ecforce shop domain (without https://)
+      examples: ["myshop.ec-force.com"]
+      order: 0
+    api_token:
+      type: string
+      title: API Token
+      description: ecforce API v2 authentication token
+      airbyte_secret: true
+      order: 1
+    start_date:
+      type: string
+      title: Start Date
+      description: Start date for data sync in format YYYY-MM-DD
+      pattern: "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+      examples: ["2024-01-01"]
+      order: 2
+    end_date:
+      type: string
+      title: End Date  
+      description: End date for data sync in format YYYY-MM-DD (optional, defaults to now)
+      pattern: "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+      examples: ["2024-12-31"]
+      order: 3
+    include_notes:
+      type: boolean
+      title: Include Customer Notes
+      description: Whether to include customer notes in the customers stream
+      default: false
+      order: 4

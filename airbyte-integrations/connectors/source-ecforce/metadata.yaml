@@ -1,0 +1,26 @@
+connectorType: source
+definitionId: d8540a80-6120-485d-b7d6-272bca477d9b
+name: ecforce
+dockerRepository: airbyte/source-ecforce
+dockerImageTag: 0.1.0
+metadataSpecVersion: "1.0"
+connectorSubtype: api
+documentationUrl: https://docs.airbyte.com/integrations/sources/ecforce
+supportLevel: community
+license: MIT
+tags:
+  - language:python
+  - keyword:api
+  - keyword:ecforce
+  - keyword:ecommerce
+  - keyword:japan
+releases:
+  breakingChanges:
+    1.0.0:
+      message: Initial release of the ecforce source connector
+      upgradeDeadline: "2024-12-31"
+registries:
+  cloud:
+    enabled: false
+  oss:
+    enabled: true
