@@ -1,6 +1,9 @@
+# Copyright (c) 2025 Airbyte, Inc., all rights reserved.
+
 from typing import Any, Iterable, List, Mapping, MutableMapping, Optional, Tuple
 
 import requests
+
 from airbyte_cdk.sources import AbstractSource
 from airbyte_cdk.sources.streams import Stream
 from airbyte_cdk.sources.streams.http import HttpStream
@@ -35,26 +38,16 @@ class UsersStream(HttpStream):
                         "suite": {"type": "string"},
                         "city": {"type": "string"},
                         "zipcode": {"type": "string"},
-                        "geo": {
-                            "type": "object",
-                            "properties": {
-                                "lat": {"type": "string"},
-                                "lng": {"type": "string"}
-                            }
-                        }
-                    }
+                        "geo": {"type": "object", "properties": {"lat": {"type": "string"}, "lng": {"type": "string"}}},
+                    },
                 },
                 "phone": {"type": "string"},
                 "website": {"type": "string"},
                 "company": {
                     "type": "object",
-                    "properties": {
-                        "name": {"type": "string"},
-                        "catchPhrase": {"type": "string"},
-                        "bs": {"type": "string"}
-                    }
-                }
-            }
+                    "properties": {"name": {"type": "string"}, "catchPhrase": {"type": "string"}, "bs": {"type": "string"}},
+                },
+            },
         }
 
 
