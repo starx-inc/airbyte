@@ -1,0 +1,46 @@
+name: Auto review PRs
+
+on:
+  pull_request:
+    types: [opened, ready_for_review]
+
+jobs:
+  auto-review:
+    permissions:
+      contents: read
+      id-token: write
+      pull-requests: write
+    runs-on: ubuntu-latest
+    # ドラフトPR、botによるPRは対象外とする
+    if: |
+      github.event.pull_request.draft == false &&
+      !endsWith(github.actor, '[bot]')
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Generate GitHub App token
+        id: app-token
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ secrets.APP_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+
+      - name: Configure AWS Credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+          aws-region: ap-northeast-1
+
+      - name: Auto review PR
+        uses: anthropics/claude-code-action@beta
+        continue-on-error: true
+        timeout-minutes: 10
+        with:
+          direct_prompt: "このPRを日本語でレビューしてください。Airbyteのデータ統合プラットフォームとしての観点から、コネクタの実装、データパイプライン、CDKの使用方法などに注目してレビューをお願いします。"
+          model: "arn:aws:bedrock:ap-northeast-1:943220318997:inference-profile/apac.anthropic.claude-sonnet-4-20250514-v1:0"
+          use_bedrock: "true"
+          github_token: ${{ steps.app-token.outputs.token }}
