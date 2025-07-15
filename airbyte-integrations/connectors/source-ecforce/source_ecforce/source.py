@@ -725,6 +725,10 @@ class CustomerNotesStream(HttpSubStream):
 class SourceEcforce(AbstractSource):
     """Source implementation for ecforce with separate notes stream"""
     
+    def max_concurrent_streams(self, config: Mapping[str, Any]) -> int:
+        """ストリームを1つずつ順次実行するように設定"""
+        return 1
+    
     def check_connection(self, logger, config) -> Tuple[bool, any]:
         """Check connection to ecforce API"""
         try:
