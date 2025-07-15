@@ -333,6 +333,11 @@ class CustomersStream(EcforceStream):
         # 子ストリーム用に生レスポンスを保存
         self._current_response_data = None
     
+    @property
+    def use_cache(self) -> bool:
+        """キャッシュを無効化してメモリ使用量を削減"""
+        return False
+    
     def path(self, **kwargs) -> str:
         return "admin/customers.json"
     
