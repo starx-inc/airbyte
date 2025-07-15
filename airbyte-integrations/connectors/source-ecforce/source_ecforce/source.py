@@ -6,7 +6,6 @@ import time
 import json
 import hashlib
 import os
-
 import requests
 from airbyte_cdk.sources import AbstractSource
 from airbyte_cdk.sources.streams import Stream
@@ -71,10 +70,10 @@ def convert_ecforce_date(date_str: Optional[str]) -> Optional[str]:
 class GCSHelper:
     """GCS操作用のヘルパークラス"""
     
-    def __init__(self, bucket_name: str, service_account_key: str, connection_id: str):
+    def __init__(self, bucket_name: str, service_account_key: str, company_name: str):
         """GCSクライアントを初期化 - 必須"""
         self.bucket_name = bucket_name
-        self.connection_id = connection_id
+        self.company_name = company_name
         
         if not storage or not service_account:
             raise ImportError("google-cloud-storage is required. Please install it with: pip install google-cloud-storage")
@@ -95,8 +94,8 @@ class GCSHelper:
     
     def save_response(self, stream_name: str, slice_key: str, data: dict) -> str:
         """APIレスポンスをGCSに保存"""
-        # ストリーム、コネクション、スライスに基づいて一意のファイル名を作成
-        filename = f"ecforce/{self.connection_id}/{stream_name}/{slice_key}.json"
+        # ストリーム、会社名、スライスに基づいて一意のファイル名を作成
+        filename = f"ecforce/{self.company_name}/{stream_name}/{slice_key}.json"
         blob = self.bucket.blob(filename)
         
         # JSONとしてデータを保存
@@ -109,7 +108,7 @@ class GCSHelper:
     
     def load_response(self, stream_name: str, slice_key: str) -> Optional[dict]:
         """GCSからAPIレスポンスを読み込み"""
-        filename = f"ecforce/{self.connection_id}/{stream_name}/{slice_key}.json"
+        filename = f"ecforce/{self.company_name}/{stream_name}/{slice_key}.json"
         blob = self.bucket.blob(filename)
         
         if blob.exists():
@@ -757,12 +756,10 @@ class SourceEcforce(AbstractSource):
         # 設定されていればGCSヘルパーを初期化
         gcs_helper = None
         if config.get("gcs_bucket") and config.get("gcs_service_account_key"):
-            # 環境変数からconnection IDを取得、なければデフォルトを使用
-            connection_id = os.environ.get("AIRBYTE_CONNECTION_ID", "default")
             gcs_helper = GCSHelper(
                 bucket_name=config["gcs_bucket"],
                 service_account_key=config["gcs_service_account_key"],
-                connection_id=connection_id
+                company_name=config["company_name"]
             )
         
         # request_intervalを取得（デフォルトは1秒）

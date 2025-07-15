@@ -19,6 +19,7 @@ def config_with_gcs() -> Dict[str, Any]:
     return {
         "domain": "test.ec-force.com",
         "api_token": "test-token-123",
+        "company_name": "test-company",
         "start_date": "2025-01-01",
         "include_notes": True,
         "gcs_bucket": "test-bucket",

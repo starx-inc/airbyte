@@ -54,6 +54,7 @@ ecforceは、D2C（Direct to Consumer）ブランド向けの高機能ECプラ�
 
 - **domain**: ecforceショップのドメイン（例：`myshop.ec-force.com`）
 - **api_token**: ecforce API v2の認証トークン
+- **company_name**: 会社名（GCSでのデータ整理に使用、英数字とハイフンのみ）
 - **gcs_bucket**: GCSバケット名（親子ストリーム同期に必要）
 - **gcs_service_account_key**: GCSサービスアカウントのJSONキー
 
@@ -108,6 +109,7 @@ docker run --rm -v $(pwd)/secrets:/secrets airbyte/source-ecforce:dev spec
 {
   "domain": "myshop.ec-force.com",
   "api_token": "your-api-token-here",
+  "company_name": "my-company",
   "start_date": "2023-01-01",
   "end_date": "2025-01-14",
   "include_notes": true,
