@@ -4,19 +4,31 @@ from typing import Dict, Any
 
 @pytest.fixture
 def config() -> Dict[str, Any]:
-    """Test configuration fixture"""
+    """テスト用設定フィクスチャ"""
     return {
         "domain": "test.ec-force.com",
         "api_token": "test-token-123",
         "start_date": "2025-01-01",
-        "end_date": "2025-01-31",
         "include_notes": True
     }
 
 
 @pytest.fixture
+def config_with_gcs() -> Dict[str, Any]:
+    """GCS設定付きテスト用設定フィクスチャ"""
+    return {
+        "domain": "test.ec-force.com",
+        "api_token": "test-token-123",
+        "start_date": "2025-01-01",
+        "include_notes": True,
+        "gcs_bucket": "test-bucket",
+        "gcs_service_account_key": '{"type": "service_account", "project_id": "test-project"}'
+    }
+
+
+@pytest.fixture
 def customers_response() -> Dict[str, Any]:
-    """Sample customers API response"""
+    """顧客APIレスポンスのサンプル"""
     return {
         "data": [
             {
@@ -54,7 +66,7 @@ def customers_response() -> Dict[str, Any]:
                     "created_at": "2024/01/01 09:00:00",
                     "updated_at": "2025/01/15 16:00:00",
                     "deleted_at": None,
-                    # Fields to be removed
+                    # 削除されるフィールド
                     "type": "customer",
                     "name": "テスト太郎",
                     "name_kana": "テストタロウ",
@@ -89,7 +101,7 @@ def customers_response() -> Dict[str, Any]:
 
 @pytest.fixture
 def customers_with_notes_response() -> Dict[str, Any]:
-    """Sample customers API response with notes included"""
+    """ノートを含む顧客APIレスポンスのサンプル"""
     return {
         "data": [
             {
@@ -145,7 +157,7 @@ def customers_with_notes_response() -> Dict[str, Any]:
 
 @pytest.fixture
 def empty_response() -> Dict[str, Any]:
-    """Empty API response"""
+    """空のAPIレスポンス"""
     return {
         "data": [],
         "included": [],

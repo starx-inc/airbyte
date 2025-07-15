@@ -6,7 +6,8 @@ connectionSpecification:
   required:
     - domain
     - api_token
-    - start_date
+    - gcs_bucket
+    - gcs_service_account_key
   additionalProperties: false
   properties:
     domain:
@@ -24,14 +25,14 @@ connectionSpecification:
     start_date:
       type: string
       title: Start Date
-      description: Start date for data sync in format YYYY-MM-DD
+      description: Start date for data sync in format YYYY-MM-DD (optional, defaults to 2 years ago)
       pattern: "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
       examples: ["2024-01-01"]
       order: 2
     end_date:
       type: string
-      title: End Date  
-      description: End date for data sync in format YYYY-MM-DD (optional, defaults to now)
+      title: End Date
+      description: End date for data sync in format YYYY-MM-DD (optional, defaults to yesterday in JST)
       pattern: "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
       examples: ["2024-12-31"]
       order: 3
@@ -41,3 +42,25 @@ connectionSpecification:
       description: Whether to include customer notes in the customers stream
       default: false
       order: 4
+    gcs_bucket:
+      type: string
+      title: GCS Bucket Name
+      description: Google Cloud Storage bucket name for caching parent stream data
+      examples: ["airbyte-ecforce-cache"]
+      order: 5
+    gcs_service_account_key:
+      type: string
+      title: GCS Service Account Key
+      description: Google Cloud Service Account JSON key for accessing the GCS bucket
+      airbyte_secret: true
+      multiline: true
+      order: 6
+    request_interval:
+      type: number
+      title: Request Interval
+      description: Number of seconds to wait between API requests (optional, defaults to 1 second)
+      minimum: 0
+      maximum: 120
+      default: 1
+      examples: [1, 5, 10]
+      order: 7
