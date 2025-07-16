@@ -92,7 +92,7 @@ class TestSourceEcforce:
             mock_gcs_helper.assert_called_once_with(
                 bucket_name="test-bucket",
                 service_account_key='{"type": "service_account", "project_id": "test-project"}',
-                connection_id="default"
+                company_name="test-company"
             )
             
             # ストリームがGCSヘルパーを持っているか検証

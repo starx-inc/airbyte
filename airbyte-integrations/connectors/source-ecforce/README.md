@@ -30,6 +30,12 @@ ecforceは、D2C（Direct to Consumer）ブランド向けの高機能ECプラ�
 - 月次スライスによる効率的なデータ取得
 - 大量のデータでも安定した同期が可能
 
+### パフォーマンス最適化
+
+- `max_concurrent_streams = 1`による順次実行（API負荷軽減）
+- 親ストリームのキャッシュ無効化によるメモリ使用量削減
+- 月次スライスで大量データを分割処理
+
 ### レート制限対策
 
 - APIリクエスト間の待機時間を設定可能（`request_interval`パラメータ）
@@ -96,11 +102,12 @@ poetry run python main.py read --config secrets/config.json --catalog configured
 ### 3. Dockerでの実行
 
 ```bash
-# イメージのビルド
-docker build . -t airbyte/source-ecforce:dev
+# Airbyte CDKを使用したイメージのビルド（推奨）
+airbyte-cdk image build --tag 0.1.1
 
-# 実行
-docker run --rm -v $(pwd)/secrets:/secrets airbyte/source-ecforce:dev spec
+# ビルドされたイメージで実行
+docker run --rm airbyte/source-ecforce:0.1.1 spec
+docker run --rm -v $(pwd)/secrets:/secrets airbyte/source-ecforce:0.1.1 check --config /secrets/config.json
 ```
 
 ### 4. 設定例
@@ -130,8 +137,7 @@ source-ecforce/
 │   ├── spec.yaml       # コネクタの仕様定義
 │   └── run.py          # エントリーポイント
 ├── unit_tests/         # ユニットテスト
-├── Dockerfile          # Dockerイメージ定義
-├── metadata.yaml       # Airbyteメタデータ
+├── metadata.yaml       # Airbyteメタデータ（ビルド設定含む）
 └── pyproject.toml      # Python依存関係
 ```
 
